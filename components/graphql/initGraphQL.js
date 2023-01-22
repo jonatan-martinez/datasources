@@ -16,7 +16,10 @@ const initGraphQL = () => {
 			resolvers: rootValue,
 			csrfPrevention: true,
 			cache: 'bounded',
-			context: async () => {
+			context: ({ req }) => {
+				if (req.body.operationName === 'IntrospectionQuery') {
+					return {}
+				}
 				const requestId = tracker.addGQLRequest()
 				return {
 					requestId,

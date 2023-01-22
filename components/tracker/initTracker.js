@@ -3,7 +3,7 @@ const { uuid } = require('uuidv4')
 const initTracker = () => {
 	const start = async ({ logger }) => {
 		const gqlRequests = {}
-		const addGQLRequest = async () => {
+		const addGQLRequest = () => {
 			const id = uuid()
 			if (!gqlRequests[id]) {
 				gqlRequests[id] = {}
@@ -18,7 +18,7 @@ const initTracker = () => {
 					requests: [],
 				}
 			}
-			gqlRequests[id][resolver] += 1
+			gqlRequests[id][resolver].hits += 1
 			gqlRequests[id][resolver].requests.push(requestInfo)
 		}
 		const getTrackInfo = () => {
