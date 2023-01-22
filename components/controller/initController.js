@@ -33,7 +33,7 @@ const initController = () => {
 				},
 			})
 			logger.info(`Getting Single Character: ${characterId}`)
-			return characters.find(ch => ch.id === characterId)
+			return characters.find(ch => ch.id === +characterId)
 			const ep = `${config.apiEndpoint}/${config.paths.character}/${characterId}`
 			const { data } = await axios.get(ep)
 			return data
