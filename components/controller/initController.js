@@ -57,6 +57,21 @@ const initController = () => {
 			return getUrl({ url })
 		}
 
+		const getLocations = ({ urls, requestId }) => {
+			tracker.addRestRequest({
+				id: requestId,
+				info: {
+					resolver: 'locations',
+					requestInfo: {
+						urls,
+					},
+				},
+			})
+			logger.info(`Getting Locations: ${urls}`)
+			return locations.filter(loc => urls.includes(`${loc.id}`))
+			return getUrl({ urls })
+		}
+
 		const getEpisode = ({ url, requestId }) => {
 			tracker.addRestRequest({
 				id: requestId,
@@ -71,12 +86,28 @@ const initController = () => {
 			return episodes.find(ep => ep.id === +url)
 			return getUrl({ url })
 		}
+		const getEpisodes = ({ urls, requestId }) => {
+			tracker.addRestRequest({
+				id: requestId,
+				info: {
+					resolver: 'episodes',
+					requestInfo: {
+						urls,
+					},
+				},
+			})
+			logger.info(`Getting Episodes: ${urls}`)
+			return episodes.filter(ep => urls.includes(`${ep.id}`))
+			return getUrl({ urls })
+		}
 
 		return {
 			getCharacter,
 			getCharacters,
 			getLocation,
 			getEpisode,
+			getLocations,
+			getEpisodes,
 		}
 	}
 

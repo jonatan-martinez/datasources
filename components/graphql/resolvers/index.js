@@ -13,8 +13,8 @@ const getResolvers = ({ controller }) => {
 				return controller.getCharacters({ characterIds, requestId })
 			},
 			Character: async (_, { characterId }, context) => {
-				const { requestId } = context
-				return controller.getCharacter({ characterId, requestId })
+				const { requestId, dataloaders } = context
+				return dataloaders.character.load(characterId)
 			},
 		},
 		Character: characterResolver,

@@ -1,7 +1,9 @@
 const { ApolloServer } = require('apollo-server-express')
 const { ApolloServerPluginDrainHttpServer } = require('apollo-server-core')
 const http = require('http')
+const DataLoader = require('dataloader')
 const { getResolvers } = require('./resolvers')
+const initLoaders = require('./dataLoaders')
 const { typeDefs } = require('./types')
 
 const initGraphQL = () => {
@@ -21,8 +23,18 @@ const initGraphQL = () => {
 					return {}
 				}
 				const requestId = tracker.addGQLRequest()
+				const {
+					characterLoader,
+					episodeLoader,
+					locationLoader,
+				} = initLoaders({ controller, requestId })
 				return {
 					requestId,
+					dataloaders: {
+						character: new DataLoader(characterLoader),
+						location: new DataLoader(locationLoader),
+						episode: new DataLoader(episodeLoader),
+					},
 				}
 			},
 			plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],

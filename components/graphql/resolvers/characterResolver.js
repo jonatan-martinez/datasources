@@ -4,12 +4,12 @@ const getCharacterResolver = ({ controller }) => {
 			return parent.name
 		},
 		location: (parent, args, context) => {
-			const { requestId } = context
-			return controller.getLocation({ url: parent.location.url, requestId })
+			const { requestId, dataloaders } = context
+			return dataloaders.location.load(parent.location.url)
 		},
 		episodes: async (parent, args, context) => {
-			const { requestId } = context
-			const episodes = await Promise.all(parent.episode.map(url => controller.getEpisode({ url, requestId })))
+			const { requestId, dataloaders } = context
+			const episodes = await Promise.all(parent.episode.map(ep => dataloaders.episode.load(ep.url)))
 			return episodes.map(_episode => {
 				const {
 					id,
