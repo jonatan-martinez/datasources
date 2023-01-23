@@ -1,7 +1,9 @@
 const { ApolloServer } = require('apollo-server-express')
+const { InMemoryLRUCache } = require('apollo-server-caching')
 const { ApolloServerPluginDrainHttpServer } = require('apollo-server-core')
 const http = require('http')
 const DataLoader = require('dataloader')
+const GenericDataSource = require('./dataSources/GenericDataSource')
 const { getResolvers } = require('./resolvers')
 const initLoaders = require('./dataLoaders')
 const { typeDefs } = require('./types')
@@ -13,28 +15,30 @@ const initGraphQL = () => {
 	}) => {
 		const rootValue = getResolvers({ controller })
 		const httpServer = http.createServer(app)
+		const {
+			characterLoader,
+			episodeLoader,
+			locationLoader,
+		} = initLoaders({ controller })
 		server = new ApolloServer({
 			typeDefs,
 			resolvers: rootValue,
 			csrfPrevention: true,
-			cache: 'bounded',
+			cache: new InMemoryLRUCache(),
+			dataSources: () => {
+				return {
+					Character: new GenericDataSource({ loader: new DataLoader(characterLoader), resolverName: 'character' }),
+					Location: new GenericDataSource({ loader: new DataLoader(locationLoader), resolverName: 'location' }),
+					Episode: new GenericDataSource({ loader: new DataLoader(episodeLoader), resolverName: 'episode' }),
+				}
+			},
 			context: ({ req }) => {
 				if (req.body.operationName === 'IntrospectionQuery') {
 					return {}
 				}
 				const requestId = tracker.addGQLRequest()
-				const {
-					characterLoader,
-					episodeLoader,
-					locationLoader,
-				} = initLoaders({ controller, requestId })
 				return {
 					requestId,
-					dataloaders: {
-						character: new DataLoader(characterLoader),
-						location: new DataLoader(locationLoader),
-						episode: new DataLoader(episodeLoader),
-					},
 				}
 			},
 			plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],

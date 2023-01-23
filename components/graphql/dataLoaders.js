@@ -1,12 +1,21 @@
-const initLoaders = ({ controller, requestId }) => {
-	const characterLoader = async ids => {
-		return controller.getCharacters({ characterIds: ids, requestId })
+const initLoaders = ({ controller }) => {
+	const characterLoader = async params => {
+		const ids = params.map(it => it.id)
+		const requestId = params && params[0].requestId
+		const characters = await controller.getCharacters({ characterIds: ids, requestId })
+		return ids.map(id => characters.find(ch => +id === +ch.id))
 	}
-	const locationLoader = async ids => {
-		return controller.getLocations({ urls: ids, requestId })
+	const locationLoader = async params => {
+		const ids = params.map(it => it.id)
+		const requestId = params && params[0].requestId
+		const locations = await controller.getLocations({ urls: ids, requestId })
+		return ids.map(id => locations.find(loc => +id === +loc.id))
 	}
-	const episodeLoader = async ids => {
-		return controller.getEpisodes({ urls: ids, requestId })
+	const episodeLoader = async params => {
+		const ids = params.map(it => it.id)
+		const requestId = params && params[0].requestId
+		const episodes = await controller.getEpisodes({ urls: ids, requestId })
+		return ids.map(id => episodes.find(ep => +id === +ep.id))
 	}
 	return {
 		characterLoader,
