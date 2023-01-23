@@ -9,7 +9,7 @@ const getCharacterResolver = ({ controller }) => {
 		},
 		episodes: async (parent, args, context) => {
 			const { requestId, dataloaders } = context
-			const episodes = await Promise.all(parent.episode.map(ep => dataloaders.episode.load(ep.url)))
+			const episodes = await Promise.all(parent.episode.map(ep => dataloaders.episode.load(ep)))
 			return episodes.map(_episode => {
 				const {
 					id,

@@ -1,11 +1,11 @@
 const initLoaders = ({ controller, requestId }) => {
-	const characterLoader = ids => {
+	const characterLoader = async ids => {
 		return controller.getCharacters({ characterIds: ids, requestId })
 	}
-	const locationLoader = ids => {
+	const locationLoader = async ids => {
 		return controller.getLocations({ urls: ids, requestId })
 	}
-	const episodeLoader = ids => {
+	const episodeLoader = async ids => {
 		return controller.getEpisodes({ urls: ids, requestId })
 	}
 	return {
